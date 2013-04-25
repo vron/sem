@@ -7,10 +7,10 @@ package samx
 import (
 	"io"
 	//	"spew"
-	"sams/interpreter"
-	"sams/memfile"
-	"sams/memfile/gap"
-	"sams/parser"
+	"github.com/vron/sem/interpreter"
+	"github.com/vron/sem/memfile"
+	"github.com/vron/sem/memfile/gap"
+	"github.com/vron/sem/parser"
 )
 
 type Stream struct {

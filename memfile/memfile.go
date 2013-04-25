@@ -8,7 +8,7 @@ A memfile is a utf8 encoded text file stored in memory that som operations can b
 import (
 	"errors"
 	"io"
-	"sams/regexp"
+	"github.com/vron/sem/regexp"
 )
 
 // The error that should be returned if this is the issue

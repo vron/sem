@@ -2,7 +2,7 @@ package regexp
 
 import (
 	"io"
-	"sams/regexp/syntax"
+	"github.com/vron/sem/regexp/syntax"
 	"unicode/utf8"
 )
 

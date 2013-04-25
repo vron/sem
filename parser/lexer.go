@@ -3,7 +3,7 @@ package parser
 import (
 	"bufio"
 	"fmt"
-	"sams/parser/adr"
+	"github.com/vron/sem/parser/adr"
 	"strconv"
 	"strings"
 	"unicode"

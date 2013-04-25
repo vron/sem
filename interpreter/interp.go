@@ -2,8 +2,8 @@ package interpreter
 
 import (
 	"errors"
-	"sams/memfile"
-	"sams/parser"
+	"github.com/vron/sem/memfile"
+	"github.com/vron/sem/parser"
 )
 
 type File struct {

@@ -2,7 +2,7 @@ package syntax
 
 import (
 	"fmt"
-	"spew"
+	"github.com/davecgh/go-spew/spew"
 )
 
 var p = fmt.Println

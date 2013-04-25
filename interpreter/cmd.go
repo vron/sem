@@ -3,10 +3,10 @@ package interpreter
 import (
 	"errors"
 	"fmt"
-	"sams/parser"
-	padr "sams/parser/adr"
-	"sams/regexp"
-	"spew"
+	"github.com/vron/sem/parser"
+	padr "github.com/vron/sem/parser/adr"
+	"github.com/vron/sem/regexp"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Store the global value of the adr mark

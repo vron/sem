@@ -5,10 +5,10 @@ import (
 	"io/ioutil"
 	"errors"
 	"bytes"
-	"sams/memfile"
+	"github.com/vron/sem/memfile"
 	"unicode/utf8"
-	"sams/regexp"
-	"sams/regexp/syntax"
+	"github.com/vron/sem/regexp"
+	"github.com/vron/sem/regexp/syntax"
 )
 
 const (

@@ -6,7 +6,7 @@ package regexp
 
 import (
 	"io"
-	"sams/regexp/syntax"
+	"github.com/vron/sem/regexp/syntax"
 )
 
 // A queue is a 'sparse array' holding pending threads of execution.

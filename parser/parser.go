@@ -5,7 +5,7 @@ import (
 	"bytes"
 	"io"
 	"io/ioutil"
-	"sams/parser/adr"
+	"github.com/vron/sem/parser/adr"
 )
 
 // Constants used to describe what type of a command something is

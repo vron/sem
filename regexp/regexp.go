@@ -57,7 +57,7 @@ package regexp
 import (
 	"bytes"
 	"io"
-	"sams/regexp/syntax"
+	"github.com/vron/sem/regexp/syntax"
 	"strconv"
 	"strings"
 	"sync"
