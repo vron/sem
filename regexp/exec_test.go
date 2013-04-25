@@ -12,7 +12,7 @@ import (
 	"math/rand"
 	"os"
 	"path/filepath"
-	"sams/regexp/syntax"
+	"github.com/vron/sem/regexp/syntax"
 	"strconv"
 	"strings"
 	"testing"

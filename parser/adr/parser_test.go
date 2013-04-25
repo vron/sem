@@ -3,7 +3,6 @@ package adr
 import (
 	"bufio"
 	"bytes"
-	"spew"
 	"testing"
 )
 
@@ -60,7 +59,6 @@ func TestParse(t *testing.T) {
 		if v.IsErr && e == nil || i < 0 {
 			t.Fail()
 			t.Log("Expected error: ", v.Desc)
-			spew.Dump(a)
 			continue
 		}
 	}

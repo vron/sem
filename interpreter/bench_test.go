@@ -2,8 +2,8 @@ package interpreter
 
 import (
 	"math/rand"
-	"sams/memfile/gap"
-	"sams/parser"
+	"github.com/vron/sem/memfile/gap"
+	"github.com/vron/sem/parser"
 	"testing"
 	"unicode"
 	"unicode/utf8"

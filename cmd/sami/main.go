@@ -7,9 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"sams/interpreter"
-	"sams/memfile/slice"
-	"sams/parser"
+	"github.com/vron/sem/interpreter"
+	"github.com/vron/sem/memfile/gap"
+	"github.com/vron/sem/parser"
 )
 
 var p = fmt.Println
@@ -55,7 +55,7 @@ func doCmd(p string) bool {
 				log.Println("--> ", e)
 				break
 			}
-			f := slice.New(b)
+			f := gap.New(b)
 			fi, e := interpreter.New(f)
 			if e != nil {
 				log.Println("--> ", e)

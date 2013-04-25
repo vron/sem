@@ -2,9 +2,9 @@ package interpreter
 
 import (
 	"fmt"
-	"sams/parser"
+	"github.com/vron/sem/parser"
 	//"spew"
-	"sams/memfile/gap"
+	"github.com/vron/sem/memfile/gap"
 	"testing"
 )
 

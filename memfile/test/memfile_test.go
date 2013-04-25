@@ -5,13 +5,13 @@ import (
 	"github.com/vron/sem/memfile"
 	//"sams/memfile/blocks"
 	"github.com/vron/sem/memfile/gap"
-	"github.com/vron/sem/memfile/slice"
+//	"github.com/vron/sem/memfile/slice"
 	"testing"
 )
 
 var imp = []memfile.File{
 	gap.New(nil),
-	slice.New(nil),
+//	slice.New(nil),
 }
 
 // TODO: This testing should be made much more rigorous!! (It is an important building block..)
