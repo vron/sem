@@ -2,10 +2,10 @@ package test
 
 import (
 	"io/ioutil"
-	"sams/memfile"
+	"github.com/vron/sem/memfile"
 	//"sams/memfile/blocks"
-	"sams/memfile/gap"
-	"sams/memfile/slice"
+	"github.com/vron/sem/memfile/gap"
+	"github.com/vron/sem/memfile/slice"
 	"testing"
 )
 
