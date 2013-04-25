@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io"
 	"io/ioutil"
-	"sams/memfile"
+	"github.com/vron/sem/memfile"
 	"unicode/utf8"
 )
 
