@@ -1,0 +1,407 @@
+
+state 0
+	$accept: .fulladr $end 
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	PLUS  shift 5
+	MINUS  shift 6
+	COMMA  shift 3
+	SEMI  shift 4
+	pBSTART  shift 8
+	.  error
+
+	fulladr  goto 1
+	adr  goto 2
+	simpadr  goto 7
+
+state 1
+	$accept:  fulladr.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	fulladr:  adr.    (1)
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	PLUS  shift 17
+	MINUS  shift 18
+	COMMA  shift 15
+	SEMI  shift 16
+	.  reduce 1 (src line 37)
+
+
+state 3
+	adr:  COMMA.adr 
+	adr:  COMMA.    (5)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	PLUS  shift 5
+	MINUS  shift 6
+	pBSTART  shift 8
+	.  reduce 5 (src line 59)
+
+	adr  goto 19
+	simpadr  goto 7
+
+state 4
+	adr:  SEMI.adr 
+	adr:  SEMI.    (9)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	PLUS  shift 5
+	MINUS  shift 6
+	pBSTART  shift 8
+	.  reduce 9 (src line 86)
+
+	adr  goto 20
+	simpadr  goto 7
+
+state 5
+	adr:  PLUS.adr 
+	adr:  PLUS.    (13)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	pBSTART  shift 8
+	.  reduce 13 (src line 113)
+
+	adr  goto 21
+	simpadr  goto 7
+
+state 6
+	adr:  MINUS.adr 
+	adr:  MINUS.    (17)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	pBSTART  shift 8
+	.  reduce 17 (src line 140)
+
+	adr  goto 22
+	simpadr  goto 7
+
+state 7
+	adr:  simpadr.    (18)
+
+	.  reduce 18 (src line 148)
+
+
+state 8
+	adr:  pBSTART.adr pBEND 
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	PLUS  shift 5
+	MINUS  shift 6
+	COMMA  shift 3
+	SEMI  shift 4
+	pBSTART  shift 8
+	.  error
+
+	adr  goto 23
+	simpadr  goto 7
+
+state 9
+	simpadr:  NUMBER.    (20)
+
+	.  reduce 20 (src line 154)
+
+
+state 10
+	simpadr:  HASH.NUMBER 
+
+	NUMBER  shift 24
+	.  error
+
+
+state 11
+	simpadr:  REG.    (22)
+
+	.  reduce 22 (src line 158)
+
+
+state 12
+	simpadr:  DOLLAR.    (23)
+
+	.  reduce 23 (src line 160)
+
+
+state 13
+	simpadr:  DOT.    (24)
+
+	.  reduce 24 (src line 162)
+
+
+state 14
+	simpadr:  ADRMARK.    (25)
+
+	.  reduce 25 (src line 164)
+
+
+state 15
+	adr:  adr COMMA.adr 
+	adr:  adr COMMA.    (4)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	PLUS  shift 5
+	MINUS  shift 6
+	pBSTART  shift 8
+	.  reduce 4 (src line 51)
+
+	adr  goto 25
+	simpadr  goto 7
+
+state 16
+	adr:  adr SEMI.adr 
+	adr:  adr SEMI.    (8)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	PLUS  shift 5
+	MINUS  shift 6
+	pBSTART  shift 8
+	.  reduce 8 (src line 78)
+
+	adr  goto 26
+	simpadr  goto 7
+
+state 17
+	adr:  adr PLUS.adr 
+	adr:  adr PLUS.    (12)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	pBSTART  shift 8
+	.  reduce 12 (src line 105)
+
+	adr  goto 27
+	simpadr  goto 7
+
+state 18
+	adr:  adr MINUS.adr 
+	adr:  adr MINUS.    (16)
+
+	HASH  shift 10
+	NUMBER  shift 9
+	REG  shift 11
+	DOLLAR  shift 12
+	DOT  shift 13
+	ADRMARK  shift 14
+	pBSTART  shift 8
+	.  reduce 16 (src line 132)
+
+	adr  goto 28
+	simpadr  goto 7
+
+state 19
+	adr:  adr.COMMA adr 
+	adr:  COMMA adr.    (3)
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	PLUS  shift 17
+	MINUS  shift 18
+	.  reduce 3 (src line 43)
+
+
+state 20
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  SEMI adr.    (7)
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	PLUS  shift 17
+	MINUS  shift 18
+	.  reduce 7 (src line 70)
+
+
+state 21
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  PLUS adr.    (11)
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	.  reduce 11 (src line 97)
+
+
+state 22
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  MINUS adr.    (15)
+	adr:  adr.MINUS 
+
+	.  reduce 15 (src line 124)
+
+
+state 23
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+	adr:  pBSTART adr.pBEND 
+
+	PLUS  shift 17
+	MINUS  shift 18
+	COMMA  shift 15
+	SEMI  shift 16
+	pBEND  shift 29
+	.  error
+
+
+state 24
+	simpadr:  HASH NUMBER.    (21)
+
+	.  reduce 21 (src line 156)
+
+
+state 25
+	adr:  adr.COMMA adr 
+	adr:  adr COMMA adr.    (2)
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	PLUS  shift 17
+	MINUS  shift 18
+	.  reduce 2 (src line 41)
+
+
+state 26
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr SEMI adr.    (6)
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	PLUS  shift 17
+	MINUS  shift 18
+	.  reduce 6 (src line 68)
+
+
+state 27
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr PLUS adr.    (10)
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr.MINUS 
+
+	.  reduce 10 (src line 95)
+
+
+state 28
+	adr:  adr.COMMA adr 
+	adr:  adr.COMMA 
+	adr:  adr.SEMI adr 
+	adr:  adr.SEMI 
+	adr:  adr.PLUS adr 
+	adr:  adr.PLUS 
+	adr:  adr.MINUS adr 
+	adr:  adr MINUS adr.    (14)
+	adr:  adr.MINUS 
+
+	.  reduce 14 (src line 122)
+
+
+state 29
+	adr:  pBSTART adr pBEND.    (19)
+
+	.  reduce 19 (src line 150)
+
+
+15 terminals, 4 nonterminals
+26 grammar rules, 30/2000 states
+0 shift/reduce, 0 reduce/reduce conflicts reported
+53 working sets used
+memory: parser 20/30000
+20 extra closures
+104 shift entries, 1 exceptions
+12 goto entries
+9 entries saved by goto default
+Optimizer space used: output 57/30000
+57 table entries, 6 zero
+maximum spread: 15, maximum offset: 18
