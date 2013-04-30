@@ -212,6 +212,12 @@ var Tests = []struct {
 		`0,/pa/ k /g/ d ' d`,
 		"\ndi",
 	},
+	{
+		"Adr regexp escape",
+		"hej\np/a\ndig",
+		`/\// d`,
+		"hej\npa\ndig",
+	},
 	
 /* Below here are reported errors from user files */
 
