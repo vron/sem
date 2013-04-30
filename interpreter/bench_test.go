@@ -52,6 +52,8 @@ func bench(b *testing.B, f func(*File), cmds string, size int, bytes int) {
 	if err != nil {
 		panic(err)
 	}
+	//bg, _ := fi.f.Get(0, fi.f.Length())
+	//println(string(bg))
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		if f != nil {
@@ -89,9 +91,11 @@ func BenchmarkInsertDeleteSame_100k(b *testing.B) { bench(b, id,"", 100, 0) }
 func BenchmarkInsertDeleteSame_1M(b *testing.B)   { bench(b, id,"", 1024, 0) }
 func BenchmarkInsertDeleteSame_10M(b *testing.B)  { bench(b, id,"",10*1024, 0)}
 
-func BenchmarkLinesAppend_1k(b *testing.B) 	  { bench(b, nil, "x/.*/ a/a/", 1, 1) }
-func BenchmarkLinesAppend_10k(b *testing.B) 	  { bench(b, nil, "x/.*/ d", 1, 1) }
-func BenchmarkLinesAppend_100k(b *testing.B) 	  { bench(b, nil, "x/.*/ d", 1, 1) }
+func BenchmarkLinesAppend_1k(b *testing.B) 	  { bench(b, nil, "x/.*/ a/A/", 1, 1) }
+func BenchmarkLinesAppend_10k(b *testing.B) 	  { bench(b, nil, "x/.*/ a/A/", 10, 1) }
+func BenchmarkLinesAppend_100k(b *testing.B) 	  { bench(b, nil, "x/.*/ a/A/", 100, 1) }
+func BenchmarkLinesAppend_1M(b *testing.B) 	  { bench(b, nil, "x/.*/ a/A/", 1024, 1) }
+func BenchmarkLinesAppend_10Mk(b *testing.B) 	  { bench(b, nil, "x/.*/ a/A/", 10*1024, 1) }
 
 func createFile(size int) *File {
 	// Keep filling with random runes, ensuring that we have somewhat reasonable line lengths

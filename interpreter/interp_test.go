@@ -182,6 +182,12 @@ var Tests = []struct {
 		`x/.*/ a/A/`,
 		"hejA\npaA\ndigA\n",
 	},
+	{
+		"Xtract append no newline",
+		"hej\npa\ndig",
+		`x/.*/ a/A/`,
+		"hejA\npaA\ndigA",
+	},
 	
 /* Below here are reported errors from user files */
 
