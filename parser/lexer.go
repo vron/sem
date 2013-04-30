@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/vron/sem/parser/adr"
+	"github.com/vron/sem/stresc"
 	"strconv"
 	"strings"
 	"unicode"
@@ -55,7 +56,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 		// We extracted an address, restart
 		return addr, nil
 	}
-
+println("SDF")
 	// So no address, then we work on the current addr,
 	// Try to find one of the commands we expect!
 	for _, v := range commands {
@@ -79,6 +80,11 @@ func (l *lexer) parseCommand() (*Command, error) {
 				}
 				// Also take the terminator out
 				l.ReadRune()
+				// Try to escape the text and set it
+				str, e = stresc.Escape(str)
+				if e != nil (
+					return nil,e
+				)
 				c.Text = string(str)
 			}
 			if v.takesRegSub {
@@ -102,6 +108,16 @@ func (l *lexer) parseCommand() (*Command, error) {
 					return nil, e
 				}
 				l.ReadRune()
+				// Try to escape the text and set it
+				sub, e = stresc.Escape(sub)
+				if e != nil (
+					return nil,e
+				)
+				text, e = stresc.Escape(text)
+				if e != nil (
+					return nil,e
+				)
+				println(string(text))
 				c.Text = string(text)
 				c.Sub = string(sub)
 			}
