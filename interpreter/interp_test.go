@@ -176,7 +176,15 @@ var Tests = []struct {
 		`x/\n+/c/\n/`,
 		"a\nb\n",
 	},
+	{
+		"Xtract append",
+		"hej\npa\ndig\n",
+		`x/.*/ a/A/`,
+		"hejA\npaA\ndigA\n",
+	},
+	
 /* Below here are reported errors from user files */
+
 	{
 		"Bug 1",
 		"Dirlik dirlik\n\t\t\tZah zah\n",

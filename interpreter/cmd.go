@@ -7,6 +7,7 @@ import (
 	padr "github.com/vron/sem/parser/adr"
 	"github.com/vron/sem/regexp"
 	"github.com/davecgh/go-spew/spew"
+	"time"
 )
 
 // Store the global value of the adr mark
@@ -29,7 +30,7 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 		f.dot, e = f.EvalAdr(cmd.Adr)
 	case parser.C_a: // Append
 		f.f.Change(f.dot.End, f.dot.End, []byte(cmd.Text))
-		if fix > f.dot.End {
+		if fix >= f.dot.End {
 			fix += len(cmd.Text)
 		}
 	case parser.C_c: // Change
@@ -94,6 +95,10 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 		f.f.Seek(int64(fp), 0)
 		var lastloc int  = -1
 		for loc := reg.FindInputIndex(f.f); loc != nil; loc = reg.FindInputIndex(f.f) {
+			println(loc[0], loc[1], fp, f.f.Length())
+			baj, _ := f.f.Get(0,f.f.Length());
+			println(string(baj))
+			time.Sleep(1*time.Second)
 			if len(loc) > 1 && loc[0]==loc[1] {
 				// If we have null match we need to check so we don't keep stamping at the
 				// same location
@@ -101,13 +106,14 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 					lastloc	= loc[0]
 				} else {
 					lastloc = -1;
-					fp++
+					fp++ // We should advance one rune note one byte!
 					continue
 				}
 			}
 			// Create a new file with dot set and run the provided cmd on that
 			fn := File{f: f.f, dot: Adr{Start: loc[0] + fp, End: loc[1] + fp}}
 			fp = fp + loc[1]
+			println("d", fp, fn.dot.Start, fn.dot.End)
 			fp, e = fn.run(cmd.Cmds[0], fp) // TODO: What if this is nill, loop loop? i.e. Run all subcommands not just one!
 			if e != nil {
 				break
