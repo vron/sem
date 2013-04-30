@@ -188,6 +188,30 @@ var Tests = []struct {
 		`x/.*/ a/A/`,
 		"hejA\npaA\ndigA",
 	},
+	{
+		"Xtract xtract",
+		"hej\npa\ndig",
+		`x/.*/ x/./ c/F/`,
+		"FFF\nFF\nFFF",
+	},
+	{
+		"Xtract guard",
+		"hej\npa\ndig",
+		`x/.*/ g/^h/ d`,
+		"\npa\ndig",
+	},
+	{
+		"Xtract not guard",
+		"hej\npa\ndig",
+		`x/.*/ v/^h/ d`,
+		"hej\n\n",
+	},
+	{
+		"Adr mark",
+		"hej\npa\ndig",
+		`0,/pa/ k /g/ d ' d`,
+		"\ndi",
+	},
 	
 /* Below here are reported errors from user files */
 
