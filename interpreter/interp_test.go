@@ -176,16 +176,11 @@ var Tests = []struct {
 		`x/\n+/c/\n/`,
 		"a\nb\n",
 	},
+/* Below here are reported errors from user files */
 	{
-		"Line-split y",
-		"a\nb\nc\nabc",
-		"y/\\n/ d",
-		"a\n\n\nabc",
-	},
-	{
-		"Error in file",
-		"x/irlik/d",
+		"Bug 1",
 		"Dirlik dirlik\n\t\t\tZah zah\n",
+		"x/irlik/d",
 		"D d\n\t\t\tZah zah\n",
 	},
 }

@@ -56,7 +56,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 		// We extracted an address, restart
 		return addr, nil
 	}
-println("SDF")
+	
 	// So no address, then we work on the current addr,
 	// Try to find one of the commands we expect!
 	for _, v := range commands {
@@ -81,11 +81,11 @@ println("SDF")
 				// Also take the terminator out
 				l.ReadRune()
 				// Try to escape the text and set it
-				str, e = stresc.Escape(str)
-				if e != nil (
+				strb, e := stresc.Escape([]byte(string(str)))
+				if e != nil {
 					return nil,e
-				)
-				c.Text = string(str)
+				}
+				c.Text = string(strb)
 			}
 			if v.takesRegSub {
 				// Next char is terminator
@@ -109,17 +109,16 @@ println("SDF")
 				}
 				l.ReadRune()
 				// Try to escape the text and set it
-				sub, e = stresc.Escape(sub)
-				if e != nil (
+				subb, e := stresc.Escape([]byte(string(sub)))
+				if e != nil {
 					return nil,e
-				)
-				text, e = stresc.Escape(text)
-				if e != nil (
+				}
+				textb, e := stresc.Escape([]byte(string(text)))
+				if e != nil {
 					return nil,e
-				)
-				println(string(text))
-				c.Text = string(text)
-				c.Sub = string(sub)
+				}
+				c.Text = string(textb)
+				c.Sub = string(subb)
 			}
 			if v.takesAdr {
 				// Try to parse a adr

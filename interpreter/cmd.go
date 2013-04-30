@@ -121,7 +121,7 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 			f.f.Seek(int64(fp), 0)
 		}
 	case parser.C_y: // Extract between matches
-		panic("y not implemented yet, pending thoughts on how to make x work...")
+		e = errors.New("y not implemented yet")
 	case parser.C_g: // Guard
 		reg, e = regexp.Compile(cmd.Text)
 		if e != nil {
