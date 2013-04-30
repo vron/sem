@@ -72,9 +72,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 					return nil, e
 				}
 				// Read until terminator
-				str, e := l.consume(func(r rune) bool {
-					return r != term
-				})
+				str, e := l.consumeDelim(term)
 				if e != nil {
 					return nil, e
 				}
@@ -94,16 +92,12 @@ func (l *lexer) parseCommand() (*Command, error) {
 					return nil, e
 				}
 				// Read until terminator (twice)
-				text, e := l.consume(func(r rune) bool {
-					return r != term
-				})
+				text, e := l.consumeDelim(term)
 				if e != nil {
 					return nil, e
 				}
 				l.ReadRune()
-				sub, e := l.consume(func(r rune) bool {
-					return r != term
-				})
+				sub, e := l.consumeDelim(term)
 				if e != nil {
 					return nil, e
 				}
@@ -202,6 +196,53 @@ func (l *lexer) getNum() (int, error) {
 		return 0, er
 	}
 	return i, nil
+}
+
+// Consume a string of text until the delimiter, but where the delimiter
+// may be escaped by being prepended by a '\'
+func (l *lexer) consumeDelim(del rune) ([]rune, error) {
+	rr := []rune{}
+	flag := false
+	for rp := l.peek();;rp = l.peek() {
+		if flag {
+			if rp == del {
+				r, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				rr = append(rr, r)
+				flag = false
+				continue
+			} else {
+				flag = false
+				rr = append(rr,'\\')
+				r, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				rr = append(rr, r)
+			}
+		} else {
+			if rp == '\\' {
+				flag = true
+				_, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				continue
+			} else {
+				if rp == del {
+					break
+				}
+				r, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				rr = append(rr, r)
+			}
+		}
+	}
+	return rr, nil
 }
 
 // Keep consuming runes as long as f returns true

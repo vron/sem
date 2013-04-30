@@ -218,6 +218,18 @@ var Tests = []struct {
 		`/\// d`,
 		"hej\npa\ndig",
 	},
+	{
+		"Diffrent del",
+		"hejpa",
+		`xhjh d`,
+		"hepa",
+	},
+	{
+		"Delimiter escaped",
+		"hejpa",
+		`xpj\pp d`,
+		"hea",
+	},
 	
 /* Below here are reported errors from user files */
 
