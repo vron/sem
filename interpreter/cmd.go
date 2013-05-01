@@ -29,7 +29,7 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 		f.dot, e = f.EvalAdr(cmd.Adr)
 	case parser.C_a: // Append
 		f.f.Change(f.dot.End, f.dot.End, []byte(cmd.Text))
-		if fix > f.dot.End {
+		if fix >= f.dot.End {
 			fix += len(cmd.Text)
 		}
 	case parser.C_c: // Change
@@ -86,22 +86,50 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 	case parser.C_x: // Extract
 		// TODO: Think about how this should work for after change overlapping etc. ... (need usage to know I think)
 		// Note that it may create eternal loop, if the user is not carefull... We consider this ok...
+		
+		// Do a fast path for the common operation of working on every line
+		if cmd.Text == ".*" {
+			var fp = f.dot.Start
+			for n, e := f.f.OffsetBytes([]byte{'\n'}, fp); fp < f.f.Length(); n, e = f.f.OffsetBytes([]byte{'\n'}, fp) {
+				if e != nil {
+					panic(e) // Should not happen!
+				}
+				fn := File{f: f.f, dot: Adr{Start: fp, End: n}}
+				if n < 0 {
+					// Did not find any, consider everything until eof a line
+					fn = File{f: f.f, dot: Adr{Start: fp, End: f.f.Length()}}
+				}
+				fp=n+1
+				fp, e = fn.run(cmd.Cmds[0], fp)
+				if e != nil {
+					panic(e)
+				} else if fp < 0 {
+					e = errors.New("Undefined inner extract change")
+				}
+				if n < 0 {
+					break
+				}
+			}
+			break
+		}
+		
 		reg, e = regexp.Compile(cmd.Text)
 		if e != nil {
 			break
 		}
 		var fp = f.dot.Start
 		f.f.Seek(int64(fp), 0)
-		var lastloc int  = -1
 		for loc := reg.FindInputIndex(f.f); loc != nil; loc = reg.FindInputIndex(f.f) {
 			if len(loc) > 1 && loc[0]==loc[1] {
 				// If we have null match we need to check so we don't keep stamping at the
 				// same location
-				if lastloc < 0 {
-					lastloc	= loc[0]
-				} else {
-					lastloc = -1;
-					fp++
+				if loc[0] == 0 {
+					//lastloc = -1;
+					fp++ // We should advance one rune note one byt
+					_, er := f.f.Seek(int64(fp), 0)
+					if er != nil { // End of file
+						break
+					}
 					continue
 				}
 			}
@@ -118,10 +146,13 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 			if fp >= f.f.Length() {
 				break
 			}
-			f.f.Seek(int64(fp), 0)
+			_, er := f.f.Seek(int64(fp), 0)
+			if er != nil {
+				break
+			}
 		}
 	case parser.C_y: // Extract between matches
-		panic("y not implemented yet, pending thoughts on how to make x work...")
+		e = errors.New("y not implemented yet")
 	case parser.C_g: // Guard
 		reg, e = regexp.Compile(cmd.Text)
 		if e != nil {

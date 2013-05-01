@@ -44,6 +44,9 @@ type File interface {
 
 	// Return the offset (in absolute terms) of the start of the given rune number from position start.
 	OffsetRune(cn, start int) (offset int, e error)
+	
+	// Return the offset (in absolute terms) of the first byte sequence given
+	OffsetBytes(find []byte, start int) (offset int, e error)
 
 	// Return the length in bytes
 	Length() int

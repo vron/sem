@@ -177,15 +177,66 @@ var Tests = []struct {
 		"a\nb\n",
 	},
 	{
-		"Line-split y",
-		"a\nb\nc\nabc",
-		"y/\\n/ d",
-		"a\n\n\nabc",
+		"Xtract append",
+		"hej\npa\ndig\n",
+		`x/.*/ a/A/`,
+		"hejA\npaA\ndigA\n",
 	},
 	{
-		"Error in file",
-		"x/irlik/d",
+		"Xtract append no newline",
+		"hej\npa\ndig",
+		`x/.*/ a/A/`,
+		"hejA\npaA\ndigA",
+	},
+	{
+		"Xtract xtract",
+		"hej\npa\ndig",
+		`x/.*/ x/./ c/F/`,
+		"FFF\nFF\nFFF",
+	},
+	{
+		"Xtract guard",
+		"hej\npa\ndig",
+		`x/.*/ g/^h/ d`,
+		"\npa\ndig",
+	},
+	{
+		"Xtract not guard",
+		"hej\npa\ndig",
+		`x/.*/ v/^h/ d`,
+		"hej\n\n",
+	},
+	{
+		"Adr mark",
+		"hej\npa\ndig",
+		`0,/pa/ k /g/ d ' d`,
+		"\ndi",
+	},
+	{
+		"Adr regexp escape",
+		"hej\np/a\ndig",
+		`/\// d`,
+		"hej\npa\ndig",
+	},
+	{
+		"Diffrent del",
+		"hejpa",
+		`xhjh d`,
+		"hepa",
+	},
+	{
+		"Delimiter escaped",
+		"hejpa",
+		`xpj\pp d`,
+		"hea",
+	},
+	
+/* Below here are reported errors from user files */
+
+	{
+		"Bug 1",
 		"Dirlik dirlik\n\t\t\tZah zah\n",
+		"x/irlik/d",
 		"D d\n\t\t\tZah zah\n",
 	},
 }

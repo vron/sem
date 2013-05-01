@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"github.com/vron/sem/parser/adr"
+	"github.com/vron/sem/stresc"
 	"strconv"
 	"strings"
 	"unicode"
@@ -55,7 +56,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 		// We extracted an address, restart
 		return addr, nil
 	}
-
+	
 	// So no address, then we work on the current addr,
 	// Try to find one of the commands we expect!
 	for _, v := range commands {
@@ -71,15 +72,18 @@ func (l *lexer) parseCommand() (*Command, error) {
 					return nil, e
 				}
 				// Read until terminator
-				str, e := l.consume(func(r rune) bool {
-					return r != term
-				})
+				str, e := l.consumeDelim(term)
 				if e != nil {
 					return nil, e
 				}
 				// Also take the terminator out
 				l.ReadRune()
-				c.Text = string(str)
+				// Try to escape the text and set it
+				strb, e := stresc.Escape([]byte(string(str)))
+				if e != nil {
+					return nil,e
+				}
+				c.Text = string(strb)
 			}
 			if v.takesRegSub {
 				// Next char is terminator
@@ -88,22 +92,27 @@ func (l *lexer) parseCommand() (*Command, error) {
 					return nil, e
 				}
 				// Read until terminator (twice)
-				text, e := l.consume(func(r rune) bool {
-					return r != term
-				})
+				text, e := l.consumeDelim(term)
 				if e != nil {
 					return nil, e
 				}
 				l.ReadRune()
-				sub, e := l.consume(func(r rune) bool {
-					return r != term
-				})
+				sub, e := l.consumeDelim(term)
 				if e != nil {
 					return nil, e
 				}
 				l.ReadRune()
-				c.Text = string(text)
-				c.Sub = string(sub)
+				// Try to escape the text and set it
+				subb, e := stresc.Escape([]byte(string(sub)))
+				if e != nil {
+					return nil,e
+				}
+				textb, e := stresc.Escape([]byte(string(text)))
+				if e != nil {
+					return nil,e
+				}
+				c.Text = string(textb)
+				c.Sub = string(subb)
 			}
 			if v.takesAdr {
 				// Try to parse a adr
@@ -187,6 +196,53 @@ func (l *lexer) getNum() (int, error) {
 		return 0, er
 	}
 	return i, nil
+}
+
+// Consume a string of text until the delimiter, but where the delimiter
+// may be escaped by being prepended by a '\'
+func (l *lexer) consumeDelim(del rune) ([]rune, error) {
+	rr := []rune{}
+	flag := false
+	for rp := l.peek();;rp = l.peek() {
+		if flag {
+			if rp == del {
+				r, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				rr = append(rr, r)
+				flag = false
+				continue
+			} else {
+				flag = false
+				rr = append(rr,'\\')
+				r, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				rr = append(rr, r)
+			}
+		} else {
+			if rp == '\\' {
+				flag = true
+				_, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				continue
+			} else {
+				if rp == del {
+					break
+				}
+				r, _, e := l.ReadRune()
+				if e != nil {
+					return rr, e
+				}
+				rr = append(rr, r)
+			}
+		}
+	}
+	return rr, nil
 }
 
 // Keep consuming runes as long as f returns true

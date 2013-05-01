@@ -114,7 +114,8 @@ func (f *File) Seek(offset int64, whence int) (int64, error) {
 		f.pos = 0
 		return 0, memfile.OutOfBounds
 	}
-	if off > len(f.b) {
+	if off > f.Length() {
+		f.pos = f.Length()
 		return  int64(len(f.b)), errors.New("Position after end")
 	}
 	f.pos = off
@@ -173,6 +174,42 @@ func (f *File) Get(start, end int) ([]byte, error) {
 	copy(b, f.b[start:f.gapStart])
 	copy(b[f.gapStart-start:], f.b[f.gapEnd:])
 	return b, nil
+}
+
+func (f *File) OffsetBytes(find []byte, start int) (offset int, e error) {
+	if start < 0 || start > len(f.b) {
+		return 0, memfile.OutOfBounds
+	}
+	var p = 0 // Progress thus far in the buffer
+	var i = 0 // Progress thus far in the pattern to search for
+	for start + p < f.gapStart {
+		if f.b[start+p] == find[i] {
+			p++
+			i++
+		} else {
+			i = 0
+			p++
+			continue
+		}
+		if i==len(find) {
+			return start+p-i, nil
+		}
+	}
+	// Now we are behind the gap
+	for start+p < f.Length() {
+		if f.b[start+p+(f.gapEnd-f.gapStart)] == find[i] {
+			p++
+			i++
+		} else {
+			i = 0
+			p++
+			continue
+		}
+		if i==len(find) {
+			return start+p-i, nil
+		}
+	}
+	return -1,nil
 }
 
 // TODO:
