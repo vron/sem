@@ -99,6 +99,11 @@ type Command struct {
 	Adr adr.Node // The adress structure if this is a address command or takes an address
 }
 
+// Pretty print this command as a string
+func (c *Command) String() string {
+	return "S"
+}
+
 // Tries to parse the given slice of bytes as commands, if an error is encountered
 // it will return a slice of all fully parsed commands and an error. Any partly
 // parsed command is discarded
