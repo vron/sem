@@ -3,6 +3,10 @@
 *.a
 *.so
 
+# Editior files
+*.swp
+*~
+
 # Folders
 _obj
 _test
