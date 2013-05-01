@@ -3,15 +3,16 @@ package parser
 import (
 	"bufio"
 	"bytes"
+	"github.com/vron/sem/parser/adr"
 	"io"
 	"io/ioutil"
-	"github.com/vron/sem/parser/adr"
+	"strings"
 )
 
 // Constants used to describe what type of a command something is
 const (
-	pC_ERROR = iota
-	C_ADR
+	c_error = iota
+	C_adr
 	C_a
 	C_c
 	C_i
@@ -30,29 +31,19 @@ const (
 	C_k
 )
 
-// Define a map so that we may go the other way
-var cmdString = map[uint]string{
-	pC_ERROR:  "err",
-	C_ADR:     "addr",
-	C_a:       "a",
-	C_c:       "c",
-	C_i:       "i",
-	C_d:       "d",
-	C_s:       "s",
-	C_m:       "m",
-	C_t:       "t",
-	C_pipeIn:  "<",
-	C_pipeOut: ">",
-	C_pipe:    "|",
-	C_bang:    "!",
-	C_x:       "x",
-	C_y:       "y",
-	C_g:       "g",
-	C_v:       "v",
-	C_k:       "k",
+// Build up a map so that we can go from command to it's string representation
+// etc, all so that we can pretty print
+var cmdInfo map[uint]int
+
+func init() {
+	cmdInfo = make(map[uint]int, len(commands))
+	for i, v := range commands {
+		cmdInfo[v.cmdType] = i
+	}
 }
 
-type cmdDesc struct {
+// List of all the commands that we support
+var commands = []struct {
 	text        string
 	takesText   bool
 	takesRegSub bool
@@ -61,9 +52,7 @@ type cmdDesc struct {
 	takesCmd    bool
 	cmdType     uint
 	desc        string
-}
-
-var commands = []cmdDesc{
+}{
 	{"a", true, false, false, false, false, C_a, "Append text after dot"},
 	{"c", true, false, false, false, false, C_c, "Change text in dot"},
 	{"i", true, false, false, false, false, C_i, "Insert text before dot"},
@@ -89,19 +78,12 @@ var commands = []cmdDesc{
 }
 
 type Command struct {
-	err  error
-	Type uint   // The type of command, given by the constants
-	Text string // Text field of the command
-	Sub  string // Second text filed, or substitute field of command
-	// Num         int		
+	Type uint      // The type of command, given by the constants
+	err  error     // The error that occured if this is a error command
+	Text string    // Text field of the command
+	Sub  string    // Second text filed, or substitute field of command
 	Cmds []Command // List of subcommands
-	//Left, Right *Command
-	Adr adr.Node // The adress structure if this is a address command or takes an address
-}
-
-// Pretty print this command as a string
-func (c *Command) String() string {
-	return "S"
+	Adr  adr.Node  // The adress structure if this is a address command or takes an address
 }
 
 // Tries to parse the given slice of bytes as commands, if an error is encountered
@@ -118,7 +100,6 @@ func ParseString(s string) ([]Command, error) {
 
 // As Parse but for a reader
 func ParseReader(r io.Reader) ([]Command, error) {
-	// TODO: Do not require the entire thing to be read into memory!
 	b, e := ioutil.ReadAll(r)
 	if e != nil && e != io.EOF {
 		return nil, e
@@ -141,7 +122,7 @@ func ParseLive(r *bufio.Reader) (chan Command, chan error) {
 				return
 			}
 			// Check so the command is not an error
-			if v.Type == pC_ERROR {
+			if v.Type == c_error {
 				println("ERR")
 				if v.err != io.EOF {
 					er <- v.err
@@ -169,7 +150,7 @@ func parse(b []byte) ([]Command, error) {
 			break
 		}
 		// Check so the command is not an error
-		if v.Type == pC_ERROR {
+		if v.Type == c_error {
 			if v.err != io.EOF {
 				e = v.err
 			}
@@ -178,6 +159,76 @@ func parse(b []byte) ([]Command, error) {
 			cmds = append(cmds, *v)
 		}
 	}
-	// TODO: Handle the errors
 	return cmds, e
+}
+
+func (c *Command) String() string {
+	// This thing will recursively print the command so we better create a buffer to 
+	// write to..
+	buf := bytes.NewBuffer(nil)
+	c.recString(buf, true)
+	return buf.String()
+}
+
+func (c *Command) recString(w io.Writer, terminate bool) {
+	// Get the info of what I am
+	id, ok := cmdInfo[c.Type]
+	if !ok {
+		if c.Type != C_adr {
+			panic("Unimplemented")
+		}
+		// So this is an adr, format it nicely by calling into the adr package
+		io.WriteString(w, c.Adr.String())
+		io.WriteString(w, " ")
+		return
+	}
+	desc := commands[id]
+	io.WriteString(w, desc.text)
+	if desc.takesText {
+		sep, str, _ := getSep(c.Text, "")
+		io.WriteString(w, sep)
+		io.WriteString(w, str)
+		io.WriteString(w, sep)
+	}
+	if desc.takesRegSub {
+		sep, a, b := getSep(c.Text, c.Sub)
+		io.WriteString(w, sep)
+		io.WriteString(w, a)
+		io.WriteString(w, sep)
+		io.WriteString(w, b)
+		io.WriteString(w, sep)
+	}
+	if desc.takesAdr {
+		io.WriteString(w, " ")
+		io.WriteString(w, c.Adr.String())
+	}
+	if desc.takesUnix {
+		panic("TODO")
+	}
+	if desc.takesCmd {
+		io.WriteString(w, " ")
+		c.Cmds[0].recString(w, false)
+	}
+
+	if terminate {
+		io.WriteString(w, "\n")
+	}
+}
+
+// Priority order for how separator is choosen, try first first etc.
+// if none of them can be used without escaping the first is choosen
+// and all instances are escaped
+var seps = []string{"/", "|", "-", "'", " "}
+
+// Returns the best choice of separator for the given strings, as well
+// as the input string escaped so that it is pretty! (sep, escaped a, escaped b)
+func getSep(a, b string) (string, string, string) {
+	for _, v := range seps {
+		if !strings.Contains(a, v) && !strings.Contains(b, v) {
+			return v, a, b
+		}
+	}
+	// No match found, then escape each occurance
+	return seps[0], strings.Replace(a, seps[0], `\`+seps[0], -1),
+		strings.Replace(b, seps[0], `\`+seps[0], -1)
 }

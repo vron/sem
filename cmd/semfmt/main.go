@@ -63,7 +63,7 @@ func dofile(f string) {
 func fixfile(b []byte, f string) {
 	cmds, e := parser.Parse(b)
 	if e != nil {
-		fmt.Fprintf(os.Stderr, "Error occured whil parsing file '%s':\n", f)
+		fmt.Fprintf(os.Stderr, "Error occured while parsing file '%s':\n", f)
 		fmt.Fprintln(os.Stderr, e)
 		fmt.Fprintln(os.Stderr, "Ignoring this file")
 		return
@@ -82,6 +82,5 @@ func fixfile(b []byte, f string) {
 	// Pretty print the command to the writer
 	for _, c := range cmds {
 		io.WriteString(w,c.String())
-		io.WriteString(w,"\n")
 	}
 }

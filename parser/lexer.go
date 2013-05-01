@@ -32,7 +32,7 @@ func lexStart(l *lexer) stateFn {
 	// Try to parse a command
 	c, e := l.parseCommand()
 	if e != nil {
-		l.items <- &Command{Type: pC_ERROR, err: e}
+		l.items <- &Command{Type: c_error, err: e}
 		return nil
 	}
 	l.items <- c
@@ -140,7 +140,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 					}
 					c.Cmds = append(c.Cmds, *co)
 					// TODO: Do we need to break here?
-					if co.Type != C_ADR {
+					if co.Type != C_adr {
 						break
 					}
 				}
@@ -169,7 +169,7 @@ func (l *lexer) parseAddr() (*Command, error) {
 		return nil, nil
 	}
 	// Create a new command of type adr
-	return &Command{Type: C_ADR, Adr: *node}, nil
+	return &Command{Type: C_adr, Adr: *node}, nil
 }
 
 func (l *lexer) ReadRune() (rune, int, error) {

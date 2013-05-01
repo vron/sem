@@ -70,7 +70,6 @@ func (l *lexer) Lex(lval *yySymType) int {
 		return NUMBER
 	case pe == '/':
 		l.in.ReadRune()
-		
 		lastWasEscape := false
 		rr, e := l.consume(func(r rune) bool {
 			if r == '\\' {
