@@ -56,7 +56,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 		// We extracted an address, restart
 		return addr, nil
 	}
-	
+
 	// So no address, then we work on the current addr,
 	// Try to find one of the commands we expect!
 	for _, v := range commands {
@@ -65,7 +65,7 @@ func (l *lexer) parseCommand() (*Command, error) {
 			l.ReadRune()
 
 			c := Command{Type: v.cmdType}
-			if v.takesText {
+			if v.takesText || v.takesReg {
 				// Next char is terminator
 				term, _, e := l.ReadRune()
 				if e != nil {
@@ -78,12 +78,16 @@ func (l *lexer) parseCommand() (*Command, error) {
 				}
 				// Also take the terminator out
 				l.ReadRune()
-				// Try to escape the text and set it
-				strb, e := stresc.Escape([]byte(string(str)))
-				if e != nil {
-					return nil,e
+				if v.takesText {
+					// Try to escape the text and set it
+					strb, e := stresc.Escape([]byte(string(str)))
+					if e != nil {
+						return nil, e
+					}
+					c.Text = string(strb)
+				} else {
+					c.Text = string(str)
 				}
-				c.Text = string(strb)
 			}
 			if v.takesRegSub {
 				// Next char is terminator
@@ -105,13 +109,9 @@ func (l *lexer) parseCommand() (*Command, error) {
 				// Try to escape the text and set it
 				subb, e := stresc.Escape([]byte(string(sub)))
 				if e != nil {
-					return nil,e
+					return nil, e
 				}
-				textb, e := stresc.Escape([]byte(string(text)))
-				if e != nil {
-					return nil,e
-				}
-				c.Text = string(textb)
+				c.Text = string(text)
 				c.Sub = string(subb)
 			}
 			if v.takesAdr {
@@ -203,7 +203,7 @@ func (l *lexer) getNum() (int, error) {
 func (l *lexer) consumeDelim(del rune) ([]rune, error) {
 	rr := []rune{}
 	flag := false
-	for rp := l.peek();;rp = l.peek() {
+	for rp := l.peek(); ; rp = l.peek() {
 		if flag {
 			if rp == del {
 				r, _, e := l.ReadRune()
@@ -215,7 +215,7 @@ func (l *lexer) consumeDelim(del rune) ([]rune, error) {
 				continue
 			} else {
 				flag = false
-				rr = append(rr,'\\')
+				rr = append(rr, '\\')
 				r, _, e := l.ReadRune()
 				if e != nil {
 					return rr, e

@@ -1,0 +1,3 @@
+#!/usr/bin/env sem
+x/.*/ v/^\s*0200/ d
+0,$ x/\n\n+/ d

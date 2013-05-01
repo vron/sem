@@ -46,6 +46,7 @@ func init() {
 var commands = []struct {
 	text        string
 	takesText   bool
+	takesReg    bool
 	takesRegSub bool
 	takesAdr    bool
 	takesUnix   bool
@@ -53,28 +54,28 @@ var commands = []struct {
 	cmdType     uint
 	desc        string
 }{
-	{"a", true, false, false, false, false, C_a, "Append text after dot"},
-	{"c", true, false, false, false, false, C_c, "Change text in dot"},
-	{"i", true, false, false, false, false, C_i, "Insert text before dot"},
+	{"a", true, false, false, false, false, false, C_a, "Append text after dot"},
+	{"c", true, false, false, false, false, false, C_c, "Change text in dot"},
+	{"i", true, false, false, false, false, false, C_i, "Insert text before dot"},
 
-	{"d", false, false, false, false, false, C_d, "Delete text in dot"},
+	{"d", false, false, false, false, false, false, C_d, "Delete text in dot"},
 
-	{"s", false, true, false, false, false, C_s, "Substitute text in dot"},
+	{"s", false, false, true, false, false, false, C_s, "Substitute text in dot"},
 
-	{"m", false, false, true, false, false, C_m, "Move text in dot after address"},
-	{"t", false, false, true, false, false, C_t, "Copy text in dot after address"},
+	{"m", false, false, false, true, false, false, C_m, "Move text in dot after address"},
+	{"t", false, false, false, true, false, false, C_t, "Copy text in dot after address"},
 
-	{"<", false, false, false, true, false, C_pipeIn, "Replace dot by command"},
-	{">", false, false, false, true, false, C_pipeOut, "Send dot to command"},
-	{"|", false, false, false, true, false, C_pipe, "Send to and replace dot by command"},
-	{"!", false, false, false, true, false, C_bang, "Run the command"},
+	{"<", false, false, false, false, true, false, C_pipeIn, "Replace dot by command"},
+	{">", false, false, false, false, true, false, C_pipeOut, "Send dot to command"},
+	{"|", false, false, false, false, true, false, C_pipe, "Send to and replace dot by command"},
+	{"!", false, false, false, false, true, false, C_bang, "Run the command"},
 
-	{"x", true, false, false, false, true, C_x, "For each math, set dot, run command"},
-	{"y", true, false, false, false, true, C_y, "Between matches, set dot, run command"},
-	{"g", true, false, false, false, true, C_g, "If it matches, run command"},
-	{"v", true, false, false, false, true, C_v, "If it doesnt match, run command"},
+	{"x", false, true, false, false, false, true, C_x, "For each math, set dot, run command"},
+	{"y", false, true, false, false, false, true, C_y, "Between matches, set dot, run command"},
+	{"g", false, true, false, false, false, true, C_g, "If it matches, run command"},
+	{"v", false, true, false, false, false, true, C_v, "If it doesnt match, run command"},
 
-	{"k", false, false, false, false, false, C_k, "Store address in dot"},
+	{"k", false, false, false, false, false, false, C_k, "Store address in dot"},
 }
 
 type Command struct {
