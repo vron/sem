@@ -281,7 +281,7 @@ yydefault:
 		/* error ... attempt to resume parsing */
 		switch Errflag {
 		case 0: /* brand new error */
-			yylex.Error("syntax error")
+			yylex.Error("syntax error in adr")
 			Nerrs++
 			if yyDebug >= 1 {
 				fmt.Printf("%s", yyStatname(yystate))

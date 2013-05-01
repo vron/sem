@@ -25,7 +25,7 @@ func (f *File) run(cmd parser.Command, fix int) (fa int, e error) {
 
 	// TODO: Update fix locations
 	switch cmd.Type {
-	case parser.C_ADR: // Set dot command
+	case parser.C_adr: // Set dot command
 		f.dot, e = f.EvalAdr(cmd.Adr)
 	case parser.C_a: // Append
 		f.f.Change(f.dot.End, f.dot.End, []byte(cmd.Text))
